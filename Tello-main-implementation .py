@@ -235,6 +235,25 @@ class TelloController:
         self.root = None
         self.app_running = True
         
+        # Attempt to connect to the drone immediately if run-drone flag is set
+        if self.args.run_drone:
+            try:
+                print("Attempting to connect to Tello drone...")
+                self.drone_controller.connect()
+                print("✓ Successfully connected to Tello drone")
+                print(f"Battery level: {self.drone_controller.battery}%")
+            except Exception as e:
+                print(f"✗ Error connecting to Tello drone: {str(e)}")
+                print("Please make sure:")
+                print("  - The drone is powered on")
+                print("  - Your computer is connected to the Tello WiFi network")
+                print("  - The djitellopy package is installed")
+                if not self.args.no_gui:
+                    messagebox.showerror("Connection Error", 
+                                      f"Error connecting to Tello drone:\n{str(e)}\n\n" +
+                                      "Please make sure the drone is powered on and\n" +
+                                      "your computer is connected to the Tello WiFi network.")
+        
         if not self.args.no_gui:
             self._init_gui()
         
